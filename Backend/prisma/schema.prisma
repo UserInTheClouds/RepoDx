@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user_account {
+  id           String         @id @default(uuid())
+  github_id    String         @unique
+  username     String
+  access_token String
+  created_at   DateTime       @default(now())
+
+  repo_data    repo_data[]
+}
+
+model repo_data {
+  id             String         @id @default(uuid())
+  user_id        String
+  github_repo_id Int
+  name           String
+  owner          String
+  created_at     DateTime       @default(now())
+
+  user           user_account   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  analysis_runs  analysis_run[]
+}
+
+enum run_status {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model analysis_run {
+  id           String         @id @default(uuid())
+  repo_id      String
+  status       run_status     @default(PENDING)
+  created_at   DateTime       @default(now())
+  completed_at DateTime?
+
+  repository   repo_data      @relation(fields: [repo_id], references: [id], onDelete: Cascade)
+  health_score health_score?
+}
+
+model health_score {
+  id                String       @id @default(uuid())
+  run_id            String       @unique
+  total_score       Float
+  commit_score      Float
+  pr_velocity_score Float
+  bus_factor_score  Float
+  dependency_score  Float
+  created_at        DateTime     @default(now())
+
+  analysis_run      analysis_run @relation(fields: [run_id], references: [id], onDelete: Cascade)
+}
