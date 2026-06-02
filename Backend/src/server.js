@@ -5,6 +5,7 @@ import passport from './middleware/passport.js'
 import session from 'express-session'
 import authRoutes from './routes/auth.route.js'
 import PGStore from 'connect-pg-simple'
+import userRoutes from './routes/user.route.js'
 dotenv.config();
 
 const app = express();
