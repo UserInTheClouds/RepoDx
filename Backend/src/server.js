@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import passport from './middleware/passport.js'
 import session from 'express-session'
 import authRoutes from './routes/auth.route.js'
+import PGStore from 'connect-pg-simple'
 dotenv.config();
 
 const app = express();
@@ -14,12 +15,19 @@ app.use(cors({
     allowedHeaders:['Content-type','Authorization']
 }))
 
+app.set('trust proxy', 1);
+
 app.use(session({
+    store: new PGStore({
+        conString:process.env.DATABASE_URL
+    }),
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
     cookie:{
         secure:false, //CHANGE WHEN IN PRODUCTION
+        httpOnly:true,
+        sameSite:'lax',
         maxAge:24*60*60*1000
     }
 }));
