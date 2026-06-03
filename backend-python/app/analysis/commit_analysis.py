@@ -4,7 +4,7 @@ import numpy as np
 # pyrefly: ignore [missing-import]
 from scipy.stats import zscore
 
-def analyze_commits(commits_data: list) -> dict:
+def calculate_commit_momentum(commits_data: list) -> dict:
     if not commits_data:
         return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": []}
     
