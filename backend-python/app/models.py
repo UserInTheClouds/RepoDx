@@ -8,6 +8,8 @@ from datetime import datetime
 class RepositoryInfo(BaseModel):
     owner:str
     repo:str
+    archived:Optional[bool] = False
+    fork:Optional[bool] = False
 
 class Commit(BaseModel):
     author: str

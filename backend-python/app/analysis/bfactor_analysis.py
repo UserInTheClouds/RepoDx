@@ -17,7 +17,9 @@ def calculate_bus_factor(contributors_data: list) -> dict:
     df['share_percentage'] = shares
     distribution = df.to_dict('records')
     
-    if hhi < 1500:
+    if len(contributors_data) == 1:
+        risk = "Solo Project"
+    elif hhi < 1500:
         risk = "Low"
     elif hhi <= 2500:
         risk = "Medium"

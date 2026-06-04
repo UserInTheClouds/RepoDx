@@ -24,5 +24,7 @@ async def analyze_repo(payload: AnalyzeRepoRequest):
     dependency_penalty = await evaluate_dependencies(deps_list)
     
     final_results = calculate_final_score(commit_momentum, pr_velocity, bus_factor, dependency_penalty)
+    final_results["is_archived"] = payload.repository.archived
+    final_results["is_fork"] = payload.repository.fork
     
     return final_results

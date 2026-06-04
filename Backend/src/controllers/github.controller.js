@@ -109,7 +109,7 @@ export const getRepoData = async (req, res) => {
         }
 
         const pythonPayload = {
-            repository: { owner, repo },
+            repository: { owner, repo, archived: repoData.archived, fork: repoData.fork },
             commits,
             pull_requests: closedPRs,
             contributors,
