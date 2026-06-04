@@ -1,35 +1,28 @@
 # pyrefly: ignore [missing-import]
 from fastapi import FastAPI
-# pyrefly: ignore [missing-import]
-from pydantic import BaseModel
-
-from app.models import CommitAnalyzeRequest, PRAnalyzeRequest, ContributorAnalyzeRequest
+from app.models import AnalyzeRepoRequest
 
 from app.analysis.commit_analysis import calculate_commit_momentum
 from app.analysis.pr_analysis import calculate_pr_velocity
 from app.analysis.bfactor_analysis import calculate_bus_factor
+from app.analysis.dependency_analysis import evaluate_dependencies
+from app.analysis.score_analysis import calculate_final_score
 
 app = FastAPI(title="RepoDx-backend-python")
 
-class AnalyzeRepoRequest(BaseModel):
-    commits_data: CommitAnalyzeRequest
-    pr_data: PRAnalyzeRequest
-    contributors_data: ContributorAnalyzeRequest
-
-@app.post("/analyze_repo")
+@app.post("/analyze")
 async def analyze_repo(payload: AnalyzeRepoRequest):
-    commits_list = [c.model_dump() for c in payload.commits_data.commits]
-    prs_list = [pr.model_dump() for pr in payload.pr_data.prs]
-    contributors_list = [contrib.model_dump() for contrib in payload.contributors_data.contributors]
+    commits_list = [c.model_dump() for c in payload.commits]
+    prs_list = [pr.model_dump() for pr in payload.pull_requests]
+    deps_list = [dep.model_dump() for dep in payload.dependencies]
+    
+    contributors_list = [{"author": c.handle, "commit_count": c.total_commits} for c in payload.contributors]
     
     commit_momentum = calculate_commit_momentum(commits_list)
     pr_velocity = calculate_pr_velocity(prs_list)
     bus_factor = calculate_bus_factor(contributors_list)
+    dependency_penalty = await evaluate_dependencies(deps_list)
     
-    return {
-        "metrics": {
-            "commit_momentum": commit_momentum,
-            "pr_velocity": pr_velocity,
-            "bus_factor": bus_factor
-        }
-    }
+    final_results = calculate_final_score(commit_momentum, pr_velocity, bus_factor, dependency_penalty)
+    
+    return final_results
