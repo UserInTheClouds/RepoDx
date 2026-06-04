@@ -1,9 +1,10 @@
-import {Octokit} from 'octokit'
+import { Octokit } from 'octokit'
 import prisma from '../utilities/db.js'
+import { runPythonAnalysis } from './python.controller.js';
 
 export const getRepoData = async (req, res) => {
     try {
-        if (!req.user ||!req.user.profile.id) {
+        if (!req.user || !req.user.profile.id) {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const tokenData = await prisma.user_account.findUnique({
@@ -24,7 +25,7 @@ export const getRepoData = async (req, res) => {
         });
 
         const { repoUrl } = req.body;
-        
+
         if (!repoUrl) {
             return res.status(400).json({ error: "Repository URL is required" });
         }
@@ -33,9 +34,9 @@ export const getRepoData = async (req, res) => {
         const owner = urlParts[urlParts.length - 2];
         const repo = urlParts[urlParts.length - 1].replace('.git', '');
 
-    
-        const { data: rawCommits } = await octokit.rest.repos.listCommits({ 
-            owner, 
+
+        const { data: rawCommits } = await octokit.rest.repos.listCommits({
+            owner,
             repo,
             per_page: 100
         });
@@ -46,8 +47,8 @@ export const getRepoData = async (req, res) => {
             message: c.commit.message
         }));
 
-        const { data: rawPRs } = await octokit.rest.pulls.list({ 
-            owner, 
+        const { data: rawPRs } = await octokit.rest.pulls.list({
+            owner,
             repo,
             state: 'closed',
             per_page: 50
@@ -68,23 +69,25 @@ export const getRepoData = async (req, res) => {
             handle: stat.author.login,
             total_commits: stat.total
         })) : [];
-    
+
         let dependencies = [];
+        let repoData;
 
         try {
-            const { data: repoData } = await octokit.rest.repos.get({ owner, repo });
+            const response = await octokit.rest.repos.get({ owner, repo });
+            repoData = response.data;
             const defaultBranch = repoData.default_branch;
 
             const { data: treeData } = await octokit.rest.git.getTree({
                 owner,
                 repo,
                 tree_sha: defaultBranch,
-                recursive: "true" 
+                recursive: "true"
             });
 
-            const manifestFiles = treeData.tree.filter(item => 
-                item.type === 'blob' && 
-                !item.path.includes('node_modules/') && 
+            const manifestFiles = treeData.tree.filter(item =>
+                item.type === 'blob' &&
+                !item.path.includes('node_modules/') &&
                 (item.path.endsWith('package.json') || item.path.endsWith('requirements.txt'))
             );
 
@@ -96,7 +99,7 @@ export const getRepoData = async (req, res) => {
                 });
 
                 const decodedContent = Buffer.from(blobData.content, 'base64').toString('utf-8');
-                
+
                 let parsedContent = decodedContent;
                 if (file.path.endsWith('package.json')) {
                     try {
@@ -107,8 +110,8 @@ export const getRepoData = async (req, res) => {
                 }
 
                 dependencies.push({
-                    path: file.path, 
-                    type: file.path.split('/').pop(), 
+                    path: file.path,
+                    type: file.path.split('/').pop(),
                     content: parsedContent
                 });
             }
@@ -125,21 +128,15 @@ export const getRepoData = async (req, res) => {
             dependencies
         };
 
-        const pythonServiceUrl = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000/analyze';
-        
-        fetch(pythonServiceUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(pythonPayload)
-        }).catch(err => {
-            console.error("Background Python trigger failed:", err.message);
-        });
-        
-        return res.status(202).json({ 
-            message: "Repository queued for analysis in the background.",
-            status: "queued"
+        const finalScores = await runPythonAnalysis(
+            pythonPayload,
+            req.user.profile.id,
+            repoData.id
+        );
+
+        return res.status(200).json({
+            message: "Analysis complete",
+            data: finalScores
         });
 
     } catch (error) {
