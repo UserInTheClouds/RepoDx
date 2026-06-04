@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class RepositoryInfo(BaseModel):
-    name:str
+    owner:str
     repo:str
 
 class Commit(BaseModel):
@@ -20,8 +20,8 @@ class PullRequest(BaseModel):
     merged_at: Optional[str] = None
 
 class Contributor(BaseModel):
-    author: str
-    commit_count: int
+    handle: str
+    total_commits: int
 
 class DependencyFile(BaseModel):
     path:str

@@ -4,27 +4,15 @@ import { runPythonAnalysis } from './python.controller.js';
 
 export const getRepoData = async (req, res) => {
     try {
-        if (!req.user || !req.user.profile.id) {
+        if (!req.user || !req.user.github_id) {
             return res.status(401).json({ error: "Unauthorized" });
-        }
-        const tokenData = await prisma.user_account.findUnique({
-            where: {
-                github_id: req.user.profile.id
-            },
-            select: {
-                access_token: true
-            }
-        });
-
-        if (!tokenData) {
-            return res.status(401).json({ error: "User not authenticated. Please log in." });
         }
 
         const octokit = new Octokit({
-            auth: tokenData.access_token
+            auth: req.user.access_token
         });
 
-        const { repoUrl } = req.body;
+        const repoUrl = req.body.github_url;
 
         if (!repoUrl) {
             return res.status(400).json({ error: "Repository URL is required" });
@@ -130,7 +118,7 @@ export const getRepoData = async (req, res) => {
 
         const finalScores = await runPythonAnalysis(
             pythonPayload,
-            req.user.profile.id,
+            req.user.github_id,
             repoData.id
         );
 

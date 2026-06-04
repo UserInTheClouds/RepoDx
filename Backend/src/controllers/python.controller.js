@@ -1,7 +1,7 @@
 import prisma from '../utilities/db.js';
 
 export const runPythonAnalysis = async (pythonPayload, githubId, githubRepoId) => {
-    const pythonServiceUrl = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000/analyze';
+    const pythonServiceUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8000/analyze';
 
     const pythonResponse = await fetch(pythonServiceUrl, {
         method: 'POST',
