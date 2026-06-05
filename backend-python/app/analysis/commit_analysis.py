@@ -19,23 +19,41 @@ def calculate_commit_momentum(commits_data: list) -> dict:
     weekly_commits = df.resample('W').size()
     
     if len(weekly_commits) < 2 or weekly_commits.std() == 0:
-        return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": []}
+        fallback_data = [
+            {
+                "week": date.strftime('%Y-%m-%d'),
+                "commit_count": int(count),
+                "z_score": 0.0,
+                "is_anomaly": False
+            }
+            for date, count in zip(weekly_commits.index, weekly_commits.values)
+        ]
+        return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": fallback_data}
+
         
     z_scores = zscore(weekly_commits)
     
+    latest_z_score = float(z_scores[-1])
+    current_week_commits = int(weekly_commits.values[-1])
+    
+    if latest_z_score < -1.5 and current_week_commits > 10:
+        anomaly_detected = False
+    elif latest_z_score < -1.5:
+        anomaly_detected = True
+    else:
+        anomaly_detected = False
+
     weekly_data = []
     for date, count, z in zip(weekly_commits.index, weekly_commits.values, z_scores):
         weekly_data.append({
             "week": date.strftime('%Y-%m-%d'),
             "commit_count": int(count),
             "z_score": float(z),
-            "is_anomaly": abs(float(z)) > 2.0
+            "is_anomaly": False 
         })
-
-    max_z = float(np.max(np.abs(z_scores)))
     
     return {
-        "anomaly_detected": max_z > 2.0,
-        "max_zscore": max_z,
+        "anomaly_detected": anomaly_detected,
+        "max_zscore": float(np.max(np.abs(z_scores))),
         "weekly_data": weekly_data
     }

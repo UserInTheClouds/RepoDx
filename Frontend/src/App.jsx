@@ -12,7 +12,7 @@ function App() {
   const [target_url, setTargetUrl] = useState('');
 
   return (
-    <div className="min-h-screen bg-taupe-50 text-slate-900 font-sans selection:bg-indigo-200 selection:text-slate-900">
+    <div className="min-h-screen bg-amber-50/15 text-slate-900 font-sans selection:bg-indigo-200 selection:text-slate-900">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />

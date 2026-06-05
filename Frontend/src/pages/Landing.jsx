@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 
+
 export default function Landing() {
     const loginWithGithub = () => {
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/github`;
     };
 
     return (
-        <div className="min-h-screen flex flex-col relative bg-taupe-50 text-slate-900">
+        <div className="min-h-screen flex flex-col relative bg-amber-50/15 text-slate-900">
             <header className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center relative">
                 <div className="text-3xl font-md tracking-tight text-slate-900">
                     RepoDx
@@ -39,7 +40,6 @@ export default function Landing() {
                         </button>
                     </div>
 
-                    {/* Mock UI - TO BE CHANGED*/}
                     <div className="bg-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
 
                         <div className="flex justify-between items-end mb-8 border-b border-slate-100 pb-6">
@@ -56,7 +56,7 @@ export default function Landing() {
                         <div className="space-y-6">
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">Momentum Drift</span>
+                                    <span className="text-slate-600 font-medium">Commit Momentum</span>
                                     <span className="text-slate-900 font-bold">100</span>
                                 </div>
                                 <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
@@ -76,7 +76,7 @@ export default function Landing() {
 
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">Bus Factor Risk</span>
+                                    <span className="text-slate-600 font-medium">Bus Factor</span>
                                     <span className="text-slate-900 font-bold">85</span>
                                 </div>
                                 <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">

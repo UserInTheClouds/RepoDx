@@ -21,10 +21,21 @@ async def analyze_repo(payload: AnalyzeRepoRequest):
     commit_momentum = calculate_commit_momentum(commits_list)
     pr_velocity = calculate_pr_velocity(prs_list)
     bus_factor = calculate_bus_factor(contributors_list)
-    dependency_penalty = await evaluate_dependencies(deps_list)
+    dependency_results = await evaluate_dependencies(deps_list)
+    dependency_penalty = dependency_results["penalty_score"]
     
     final_results = calculate_final_score(commit_momentum, pr_velocity, bus_factor, dependency_penalty)
     final_results["is_archived"] = payload.repository.archived
     final_results["is_fork"] = payload.repository.fork
     
+    final_results["commit_history"] = [
+        {"week": w["week"], "volume": w["commit_count"]} 
+        for w in commit_momentum.get("weekly_data", [])
+    ]
+    
+    final_results["dependencies"] = dependency_results["dependencies_list"]
+    final_results["owner"] = payload.repository.owner
+    final_results["repo"] = payload.repository.repo
+    
     return final_results
+

@@ -23,11 +23,16 @@ export const getRepoData = async (req, res) => {
         const repo = urlParts[urlParts.length - 1].replace('.git', '');
 
 
-        const { data: rawCommits } = await octokit.rest.repos.listCommits({
-            owner,
-            repo,
-            per_page: 100
-        });
+        // Concurrently fetch 3 pages (300 items total) for both Commits and PRs
+        // This fires all 6 API requests at the exact same time so it stays fast!
+        const [commitPages, prPages] = await Promise.all([
+            Promise.all([1, 2, 3].map(page => octokit.rest.repos.listCommits({ owner, repo, per_page: 100, page }))),
+            Promise.all([1, 2, 3].map(page => octokit.rest.pulls.list({ owner, repo, state: 'closed', per_page: 100, page })))
+        ]);
+
+        // Flatten the 3 arrays of 100 into a single array of 300
+        const rawCommits = commitPages.flatMap(response => response.data);
+        const rawPRs = prPages.flatMap(response => response.data);
 
         const commits = rawCommits.map(c => ({
             author: c.commit.author.name,
@@ -35,23 +40,24 @@ export const getRepoData = async (req, res) => {
             message: c.commit.message
         }));
 
-        const { data: rawPRs } = await octokit.rest.pulls.list({
-            owner,
-            repo,
-            state: 'closed',
-            per_page: 50
-        });
+        const closedPRs = rawPRs
+            .filter(pr => pr.merged_at !== null)
+            .filter(pr => pr.user && pr.user.type !== 'Bot' && !pr.user.login.toLowerCase().includes('bot'))
+            .map(pr => ({
+                created_at: pr.created_at,
+                closed_at: pr.closed_at,
+                merged_at: pr.merged_at
+            }));
 
-        const closedPRs = rawPRs.map(pr => ({
-            created_at: pr.created_at,
-            closed_at: pr.closed_at,
-            merged_at: pr.merged_at
-        }));
-
-        const { data: rawStats } = await octokit.rest.repos.getContributorsStats({
-            owner,
-            repo
-        });
+        let rawStats = [];
+        for (let i = 0; i < 4; i++) {
+            const response = await octokit.rest.repos.getContributorsStats({ owner, repo });
+            if (response.status === 200) {
+                rawStats = response.data;
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
 
         const contributors = Array.isArray(rawStats) ? rawStats.map(stat => ({
             handle: stat.author.login,
@@ -73,40 +79,50 @@ export const getRepoData = async (req, res) => {
                 recursive: "true"
             });
 
-            const manifestFiles = treeData.tree.filter(item =>
+            let manifestFiles = treeData.tree.filter(item =>
                 item.type === 'blob' &&
                 !item.path.includes('node_modules/') &&
                 (item.path.endsWith('package.json') || item.path.endsWith('requirements.txt'))
             );
 
-            for (const file of manifestFiles) {
-                const { data: blobData } = await octokit.rest.git.getBlob({
-                    owner,
-                    repo,
-                    file_sha: file.sha
-                });
+            manifestFiles.sort((a, b) => {
+                const depthA = a.path.split('/').length;
+                const depthB = b.path.split('/').length;
+                return depthA - depthB;
+            });
 
-                const decodedContent = Buffer.from(blobData.content, 'base64').toString('utf-8');
+            const filesToFetch = manifestFiles.slice(0, 5);
 
-                let parsedContent = decodedContent;
-                if (file.path.endsWith('package.json')) {
-                    try {
-                        parsedContent = JSON.parse(decodedContent);
-                    } catch (e) {
-                        parsedContent = decodedContent;
+            for (const file of filesToFetch) {
+                try {
+                    const { data: blobData } = await octokit.rest.git.getBlob({
+                        owner,
+                        repo,
+                        file_sha: file.sha
+                    });
+
+                    const decodedContent = Buffer.from(blobData.content, 'base64').toString('utf-8');
+                    let parsedContent = decodedContent;
+
+                    if (file.path.endsWith('package.json')) {
+                        try { parsedContent = JSON.parse(decodedContent); }
+                        catch (e) { parsedContent = decodedContent; }
                     }
-                }
 
-                dependencies.push({
-                    path: file.path,
-                    type: file.path.split('/').pop(),
-                    content: parsedContent
-                });
+                    dependencies.push({
+                        path: file.path,
+                        type: file.path.split('/').pop(),
+                        content: parsedContent
+                    });
+                } catch (e) {
+                    console.error(`Failed to fetch blob for ${file.path}`);
+                }
             }
 
         } catch (err) {
             console.error("Failed to fetch recursive dependency tree:", err.message);
         }
+
 
         const pythonPayload = {
             repository: { owner, repo, archived: repoData.archived, fork: repoData.fork },

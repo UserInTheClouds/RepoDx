@@ -29,22 +29,29 @@ async def fetch_latest_version(client: httpx.AsyncClient, package: str, ecosyste
     
     return "timeout"
 
-async def evaluate_dependencies(dependency_files: list) -> int:
+async def evaluate_dependencies(dependency_files: list) -> dict:
     deps_to_check = []
     
     for df in dependency_files:
         if df['type'] == 'package.json' and isinstance(df['content'], dict):
             deps = df['content'].get('dependencies', {})
+            dev_deps = df['content'].get('devDependencies', {})
+            
             for name, ver in deps.items():
-                deps_to_check.append({"name": name, "version": ver, "ecosystem": "node"})
+                deps_to_check.append({"name": name, "version": ver, "ecosystem": "node", "is_dev": False})
+                
+            for name, ver in dev_deps.items():
+                deps_to_check.append({"name": name, "version": ver, "ecosystem": "node", "is_dev": True})
+
         elif df['type'] == 'requirements.txt' and isinstance(df['content'], str):
             for line in df['content'].split('\n'):
                 line = line.strip()
                 if line and not line.startswith('#') and '==' in line:
                     name, ver = line.split('==', 1)
-                    deps_to_check.append({"name": name.strip(), "version": ver.strip(), "ecosystem": "python"})
+                    deps_to_check.append({"name": name.strip(), "version": ver.strip(), "ecosystem": "python", "is_dev": False})
 
-    if not deps_to_check: return 0
+
+    if not deps_to_check: return {"penalty_score":0,"dependencies_list":[]}
 
     total_penalty = 0
     
@@ -52,8 +59,24 @@ async def evaluate_dependencies(dependency_files: list) -> int:
         tasks = [fetch_latest_version(client, dep['name'], dep['ecosystem']) for dep in deps_to_check]
         latest_versions = await asyncio.gather(*tasks, return_exceptions=True)
         
+        dependencies_data = []
         for dep, latest in zip(deps_to_check, latest_versions):
             if latest != "timeout" and not isinstance(latest, Exception):
-                total_penalty += calculate_version_penalty(dep['version'], latest)
+                penalty_amount = calculate_version_penalty(dep['version'], latest)
+                total_penalty += penalty_amount
+                
+                lag_count = 0 if penalty_amount == 0 else (2 if penalty_amount == 2 else 3)
+                dependencies_data.append({
+                    "name": dep['name'], 
+                    "lag": lag_count,
+                    "is_dev": dep.get("is_dev", False)
+                })
+
+            
+    return {
+        "penalty_score": min(total_penalty, 20),
+        "dependencies_list": dependencies_data
+    }
+
             
     return min(total_penalty, 20)

@@ -16,7 +16,7 @@ export default function Input({
         setErrorMessage(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/github/analyze-url`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/github/analyze-url`, {  //CHANGE LATER
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function Input({
 
     return (
 
-        <div className="min-h-screen flex items-center justify-center p-4 relative">
+        <div className="min-h-screen bg-amber-50/15 flex items-center justify-center p-4 relative">
             <header className="absolute top-0 left-0 w-full z-50">
                 <div className="w-full max-w-7xl mx-auto p-6">
                     <Link to="/" className="text-3xl font-normal tracking-tight text-slate-900 hover:text-slate-600 transition-colors">

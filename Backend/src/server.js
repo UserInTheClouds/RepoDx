@@ -9,12 +9,15 @@ import connectPgSimple from 'connect-pg-simple'
 dotenv.config();
 
 const app = express();
-app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "PUT", "POST", "OPTIONS", "DELETE"],
-    allowedHeaders: ['Content-type', 'Authorization']
-}))
+
+if (process.env.NODE_ENV == "DEVELOPMENT") {
+    app.use(cors({
+        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        credentials: true,
+        methods: ["GET", "PUT", "POST", "OPTIONS", "DELETE"],
+        allowedHeaders: ['Content-type', 'Authorization']
+    }))
+}
 
 app.set('trust proxy', 1);
 

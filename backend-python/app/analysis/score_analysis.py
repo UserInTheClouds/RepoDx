@@ -18,7 +18,7 @@ def calculate_final_score(commit_momentum: dict, pr_velocity: dict, bus_factor: 
 
         
     is_drift = commit_momentum["anomaly_detected"]
-    momentum_status = "Unstable Drift" if is_drift else "Stable"
+    momentum_status = "Unstable" if is_drift else "Stable"
     
     total_penalty = pr_penalty + bus_penalty + dependency_penalty
     final_health_score = int(base_score - total_penalty)
