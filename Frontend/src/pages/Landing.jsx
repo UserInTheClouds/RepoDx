@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
     const loginWithGithub = () => {
-        window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/github`;
+        window.location.href = `/api/auth/github`;
     };
 
     return (
