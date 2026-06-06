@@ -16,10 +16,11 @@ jobs:
       - name: Build Frontend
         working-directory: ./Frontend
         env:
-          VITE_BACKEND_URL: "https://api.repodx.software"
+          VITE_BACKEND_URL: ${{ vars.VITE_BACKEND_URL }}
         run: |
           npm install
           npm run build
+
 
       - name: Deploy Compiled Frontend via SCP
         uses: appleboy/scp-action@v0.1.4
