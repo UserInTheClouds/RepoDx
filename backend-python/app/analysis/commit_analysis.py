@@ -6,14 +6,14 @@ from scipy.stats import zscore
 
 def calculate_commit_momentum(commits_data: list) -> dict:
     if not commits_data:
-        return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": []}
+        return {"max_zscore": 0.0, "weekly_data": []}
     
     df = pd.DataFrame(commits_data)
     df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True, errors='coerce')
     df = df.dropna(subset=['timestamp'])
     
     if df.empty:
-        return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": []}
+        return {"max_zscore": 0.0, "weekly_data": []}
         
     df.set_index('timestamp', inplace=True)
     weekly_commits = df.resample('D').size()
@@ -23,37 +23,22 @@ def calculate_commit_momentum(commits_data: list) -> dict:
             {
                 "week": date.strftime('%Y-%m-%d'),
                 "commit_count": int(count),
-                "z_score": 0.0,
-                "is_anomaly": False
             }
             for date, count in zip(weekly_commits.index, weekly_commits.values)
         ]
-        return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": fallback_data}
+        return {"max_zscore": 0.0, "weekly_data": fallback_data}
 
         
     z_scores = zscore(weekly_commits)
     
-    latest_z_score = float(z_scores[-1])
-    current_week_commits = int(weekly_commits.values[-1])
-    
-    if latest_z_score < -1.5 and current_week_commits > 10:
-        anomaly_detected = False
-    elif latest_z_score < -1.5:
-        anomaly_detected = True
-    else:
-        anomaly_detected = False
-
     weekly_data = []
     for date, count, z in zip(weekly_commits.index, weekly_commits.values, z_scores):
         weekly_data.append({
             "week": date.strftime('%Y-%m-%d'),
             "commit_count": int(count),
-            "z_score": float(z),
-            "is_anomaly": False 
         })
     
     return {
-        "anomaly_detected": anomaly_detected,
         "max_zscore": float(np.max(np.abs(z_scores))),
         "weekly_data": weekly_data
     }

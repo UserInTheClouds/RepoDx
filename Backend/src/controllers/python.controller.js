@@ -35,7 +35,7 @@ export const runPythonAnalysis = async (pythonPayload, githubId, githubRepoId) =
             health_score: {
                 create: {
                     total_score: analysisResults.health_score,
-                    commit_score: analysisResults.momentum_drift_status === "Unstable Drift" ? 90.0 : 100.0,
+                    commit_score: 100.0,
                     pr_velocity_score: analysisResults.pr_velocity_days > 3.0 ? 90.0 : 100.0,
                     bus_factor_score: analysisResults.bus_factor_risk === "High" ? 85.0 : 100.0,
                     dependency_score: 100.0 - analysisResults.dependency_penalty_score

@@ -22,10 +22,10 @@ export default function Result({ health_data, is_loading }) {
     const {
         health_score,
         bus_factor_risk,
-        momentum_drift_status,
         dependency_penalty_score,
         pr_velocity_days,
         commit_history,
+        max_zscore,
         dependencies,
         is_archived,
         is_fork,
@@ -97,7 +97,7 @@ export default function Result({ health_data, is_loading }) {
                     <div className="md:col-span-2">
                         <CommitCount
                             commit_history={commit_history}
-                            momentum_drift_status={momentum_drift_status}
+                            max_zscore={max_zscore}
                         />
                     </div>
 

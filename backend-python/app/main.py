@@ -32,7 +32,7 @@ async def analyze_repo(payload: AnalyzeRepoRequest):
         {"week": w["week"], "volume": w["commit_count"]} 
         for w in commit_momentum.get("weekly_data", [])
     ]
-    
+    final_results["max_zscore"] = round(commit_momentum.get("max_zscore", 0.0), 2)
     final_results["dependencies"] = dependency_results["dependencies_list"]
     final_results["owner"] = payload.repository.owner
     final_results["repo"] = payload.repository.repo

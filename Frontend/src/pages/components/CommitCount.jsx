@@ -1,8 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import InfoTooltip from './InfoToolTip.jsx';
 
-export default function CommitCount({ commit_history, momentum_drift_status }) {
-    const show_warning = momentum_drift_status === "Declining" || momentum_drift_status === "Unstable";
+export default function CommitCount({ commit_history, max_zscore }) {
     const tooltip_text = "Commit Momentum\n\nShows commit volume over time.\n\nNote: A declining graph triggers a warning, but for mature projects, low commit frequency is completely normal and doesn't affect the final health score.";
 
     return (
@@ -13,14 +12,12 @@ export default function CommitCount({ commit_history, momentum_drift_status }) {
             </div>
             <h3 className="text-lg font-medium text-slate-600 mb-4">Commit Momentum <span className='text-sm text-gray-400'>(Last 300 Commits)</span></h3>
 
-            {show_warning && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-sm font-medium">
-                    Commits are declining or showing structural anomalies.
-                </div>
-            )}
-            <p className="text-xs text-slate-500 mb-6 italic">
-                (Note: Commit frequency alone doesn't indicate health for mature or stable projects.)
-            </p>
+            <div className="mb-4 flex items-center gap-2">
+                <span className="text-sm font-medium text-slate-500">Max Z-Score:</span>
+                <span className="text-sm font-semibold text-blue-500 py-1 rounded-md">
+                    {max_zscore}
+                </span>
+            </div>
 
             {commit_history && commit_history.length > 0 ? (
                 <div className="flex-1 w-full min-h-[16rem] mt-2">
