@@ -44,12 +44,19 @@ export default function Input({
 
         <div className="min-h-screen bg-amber-50/15 flex items-center justify-center p-4 relative">
             <header className="absolute top-0 left-0 w-full z-50">
-                <div className="w-full max-w-7xl mx-auto p-6">
+                <div className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center">
                     <Link to="/" className="text-3xl font-normal tracking-tight text-slate-900 hover:text-slate-600 transition-colors">
                         RepoDx
                     </Link>
+                    <button
+                        onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`}
+                        className="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                        Log Out
+                    </button>
                 </div>
             </header>
+
 
             <div className="w-full max-w-2xl p-10 rounded-2xl">
 
