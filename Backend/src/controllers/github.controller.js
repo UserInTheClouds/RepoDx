@@ -14,23 +14,30 @@ export const getRepoData = async (req, res) => {
 
         const repoUrl = req.body.github_url;
 
-        if (!repoUrl) {
+        if (!repoUrl || typeof repoUrl !== 'string') {
             return res.status(400).json({ error: "Repository URL is required" });
+        }
+
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(repoUrl.trim());
+        } catch (err) {
+            return res.status(400).json({ error: "Invalid URL format" });
+        }
+
+        if (parsedUrl.hostname !== "github.com" && parsedUrl.hostname !== "www.github.com") {
+            return res.status(400).json({ error: "URL must be a valid github repository" });
         }
 
         const urlParts = new URL(repoUrl).pathname.split('/').filter(Boolean);
         const owner = urlParts[urlParts.length - 2];
         const repo = urlParts[urlParts.length - 1].replace('.git', '');
 
-
-        // Concurrently fetch 3 pages (300 items total) for both Commits and PRs
-        // This fires all 6 API requests at the exact same time so it stays fast!
         const [commitPages, prPages] = await Promise.all([
             Promise.all([1, 2, 3].map(page => octokit.rest.repos.listCommits({ owner, repo, per_page: 100, page }))),
             Promise.all([1, 2, 3].map(page => octokit.rest.pulls.list({ owner, repo, state: 'closed', per_page: 100, page })))
         ]);
 
-        // Flatten the 3 arrays of 100 into a single array of 300
         const rawCommits = commitPages.flatMap(response => response.data);
         const rawPRs = prPages.flatMap(response => response.data);
 
