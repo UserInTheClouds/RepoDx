@@ -16,7 +16,7 @@ def calculate_commit_momentum(commits_data: list) -> dict:
         return {"anomaly_detected": False, "max_zscore": 0.0, "weekly_data": []}
         
     df.set_index('timestamp', inplace=True)
-    weekly_commits = df.resample('W').size()
+    weekly_commits = df.resample('D').size()
     
     if len(weekly_commits) < 2 or weekly_commits.std() == 0:
         fallback_data = [
