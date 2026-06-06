@@ -28,8 +28,6 @@ npx prisma generate
 npx prisma db push
 npm run dev
  ```
- (Requires a .env file with postgres DATABASE_URL and GitHub OAuth Credentials)
-
  - Python Backend
  ``` 
  cd RepoDx/backend-python
