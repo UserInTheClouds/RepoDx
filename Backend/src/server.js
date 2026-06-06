@@ -31,7 +31,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, //CHANGE WHEN IN PRODUCTION
+        secure: true,  //TRUE FOR PRODUCTION 
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000

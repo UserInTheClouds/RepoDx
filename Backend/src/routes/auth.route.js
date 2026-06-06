@@ -12,4 +12,15 @@ router.get('/github/callback', passport.authenticate('github', { failureRedirect
     res.redirect(`${CLIENT_URL}/input`);
 });
 
+router.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) { return next(err); }
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid');
+            res.redirect(`${CLIENT_URL}/`);
+        });
+    });
+});
+
+
 export default router
