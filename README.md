@@ -6,8 +6,8 @@ https://www.repodx.software/
 
 ### Tech Stack
 
-*   **Frontend**: React, Tailwindcss
-*   **Backend (Authentication & Data Fetching)**: Node.js, Express, Passport.js
+*   **Frontend**: React, Vite, Tailwindcss, Recharts
+*   **Backend (Authentication & Data Fetching)**: Node.js, Express, Passport.js, Octokit
 *   **Data Analysis API**: FastAPI, Python, Numpy, Pandas
 *   **Database**: PostgreSQL
 
@@ -15,6 +15,11 @@ https://www.repodx.software/
 ![](./Frontend/src/assets/ss2.png)
 
 ## To Run It Locally
+
+(In order to use this tool on private repositories, open Backend/src/routes/auth.route.js and on line 9, change "public_repo" to "repo")
+
+
+To run it locally, first clone the repository
 
 ```
 git clone https://github.com/UserInTheClouds/RepoDx.git
