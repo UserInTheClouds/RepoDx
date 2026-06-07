@@ -69,7 +69,7 @@ export default function Input({
                     </div>
                 ) : (
                     <>
-                        <h2 className="text-2xl font-semibold mb-8 text-center text-slate-700">Enter a GitHub repository URL</h2>
+                        <h2 className="text-2xl font-semibold mb-8 text-center text-slate-700">Enter a public GitHub repository URL</h2>
                         <form onSubmit={handleAnalyze} className="space-y-6">
                             <div>
                                 <input
