@@ -2,7 +2,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import InfoTooltip from './InfoToolTip.jsx';
 
 export default function CommitCount({ commit_history, max_zscore }) {
-    const tooltip_text = "Commit Momentum\n\nShows commit volume over time.\n\nNote: A declining graph triggers a warning, but for mature projects, low commit frequency is completely normal and doesn't affect the final health score.";
+    const tooltip_text = "Commit Momentum\n\nShows commit volume over time.\n\nNote: A declining graph triggers a warning, but for mature projects, low commit frequency is completely normal and doesn't affect the final score.";
 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">

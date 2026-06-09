@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-
+import mockDashboard from '../assets/ssfor.png';
 
 export default function Landing() {
     const loginWithGithub = () => {
@@ -7,8 +7,8 @@ export default function Landing() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col relative bg-amber-50/15 text-slate-900">
-            <header className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center relative">
+        <div className="min-h-screen flex flex-col relative bg-amber-50/15 text-slate-900 overflow-x-hidden">
+            <header className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center relative z-30">
                 <div className="text-3xl font-md tracking-tight text-slate-900">
                     RepoDx
                 </div>
@@ -20,10 +20,10 @@ export default function Landing() {
                 </button>
             </header>
 
-            <main className="flex-1 flex items-center justify-center p-8 max-w-7xl mx-auto w-full relative">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+            <main className="flex-1 flex flex-col items-center p-8 max-w-7xl mx-auto w-full relative gap-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full mt-8 lg:mt-12">
 
-                    <div className="space-y-8">
+                    <div className="space-y-8 z-10 relative -translate-y-13 translate-x-2">
                         <h1 className="text-6xl lg:text-7xl font-extrabold tracking-tight text-stone-900 leading-tight">
                             Analyze your <br /> Repositories
                         </h1>
@@ -40,62 +40,56 @@ export default function Landing() {
                         </button>
                     </div>
 
-                    <div className="bg-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
-
-                        <div className="flex justify-between items-end mb-8 border-b border-slate-100 pb-6">
-                            <div>
-                                <h3 className="text-xl font-bold text-slate-800">Repository Analysis</h3>
-                                <p className="text-sm text-slate-500 mt-1">owner/sample-repo</p>
-                            </div>
-                            <div className="text-right">
-                                <span className="block text-5xl font-black text-emerald-500">92<span className="text-2xl text-slate-300">/100</span></span>
-                                <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1 block">Excellent</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">Commit Momentum</span>
-                                    <span className="text-slate-900 font-bold">100</span>
-                                </div>
-                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                    <div className="bg-emerald-500 h-2.5 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">PR Velocity</span>
-                                    <span className="text-slate-900 font-bold">100</span>
-                                </div>
-                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                    <div className="bg-emerald-500 h-2.5 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">Bus Factor</span>
-                                    <span className="text-slate-900 font-bold">85</span>
-                                </div>
-                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                    <div className="bg-amber-400 h-2.5 rounded-full" style={{ width: '85%' }}></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium">Dependency Score</span>
-                                    <span className="text-slate-900 font-bold">90</span>
-                                </div>
-                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                    <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: '90%' }}></div>
-                                </div>
-                            </div>
+                    <div className="w-full relative lg:w-[95%] ml-auto z-20 -translate-y-6 lg:-translate-y-12">
+                        <div className="bg-white/40 backdrop-blur-xl p-3 sm:p-4 rounded-[2rem] shadow-2xl border border-white/60">
+                            <img
+                                src={mockDashboard}
+                                alt="RepoDx Dashboard Preview"
+                                className="w-full h-auto rounded-xl shadow-sm border border-slate-200 object-cover"
+                            />
                         </div>
                     </div>
+
                 </div>
+
+                <div className="w-full pb-16">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-slate-900">What each factor means</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Commit Momentum</h3>
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                                Commit volume over time. <br />Note: A declining graph triggers a warning, but for mature projects, low commit frequency is completely normal and doesn't affect the final score.
+                            </p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">PR Velocity</h3>
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                                Measures the average time it takes to close or merge a Pull Request. So, lower is better.
+                            </p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Bus Factor Risk</h3>
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                                Measures how much the project relies on a single developer (HHI index). Improve this by having having multiple developers commit.
+                            </p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Dependency Decay</h3>
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                                Checks your package dependencies to see how many major versions behind they are compared to the latest releases.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
             </main>
         </div>
     );
