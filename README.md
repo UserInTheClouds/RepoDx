@@ -1,6 +1,6 @@
 # RepoDx 
-RepoDx is a repository analytics platform that ingests GitHub API data via Octokit and routes it into a separate Python backend for analysis. 
-It analyzes repositories across four dimensions (commit momentum, PR velocity, bus factor risk, and dependency decay), using Z-score for commit trend analysis and the Herfindahl-Hirschman Index (HHI) for contributor concentration risk.
+RepoDx is a repository analytics platform that takes GitHub API data via Octokit and routes it into a separate Python backend for analysis. 
+It analyzes repositories across four factors (commit momentum, PR velocity, bus factor risk, and dependency decay), using Z-score for commit trend analysis and the Herfindahl-Hirschman Index (HHI) for contributor concentration risk.
 
 ### 🔗 Link
 https://www.repodx.software/
