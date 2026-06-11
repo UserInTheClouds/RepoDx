@@ -42,7 +42,7 @@ export default function Result({ health_data, is_loading }) {
                     </Link>
                     <button
                         onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`}
-                        className="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                        className="px-4 py-2 text-sm font-medium text-white bg-red-400 border border-slate-300 rounded-lg hover:bg-red-500 transition-colors cursor-pointer">
                         Log Out
                     </button>
                 </div>

@@ -3,7 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Input from './pages/Input';
 import Result from './pages/Result';
+import ReactGA from "react-ga4";
+import Analytics from './pages/components/Analytics';
 import './App.css';
+
+ReactGA.initialize("G-335WXCHD62");
 
 function App() {
   const [health_data, setHealthData] = useState(null);
@@ -14,6 +18,7 @@ function App() {
   return (
     <div className="min-h-screen bg-amber-50/15 text-slate-900 font-sans selection:bg-indigo-200 selection:text-slate-900">
       <BrowserRouter>
+        <Analytics />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route
