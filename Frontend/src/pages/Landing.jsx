@@ -28,8 +28,8 @@ export default function Landing() {
                             Analyze your <br /> Repositories
                         </h1>
                         <p className="text-xl text-slate-700 leading-relaxed max-w-lg">
-                            Instantly analyze the health, momentum, and dependencies of any GitHub repository.
-                            Log in with your GitHub account to start analyzing.
+                            Analyze the health, commit momentum, bus factor risk, PR velocity and dependencies of any GitHub repository.
+                            Log in with your GitHub account to begin.
                         </p>
 
                         <button
