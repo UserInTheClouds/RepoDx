@@ -108,6 +108,11 @@ export const getRepoData = async (req, res) => {
                         file_sha: file.sha
                     });
 
+                    if (blobData.size > 500000) {
+                        console.warn(`File ${file.path} is too large (${blobData.size} bytes). File was ignored.`);
+                        continue;
+                    }
+
                     const decodedContent = Buffer.from(blobData.content, 'base64').toString('utf-8');
                     let parsedContent = decodedContent;
 
