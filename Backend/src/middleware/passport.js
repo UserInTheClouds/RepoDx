@@ -5,6 +5,7 @@ import prisma from '../utilities/db.js'
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    state: true,
     callbackURL: `${process.env.GITHUB_CALLBACK_URL}/api/auth/github/callback`
 }, async (accessToken, refreshToken, profile, done) => {
     try {

@@ -1,7 +1,11 @@
 # pyrefly: ignore [missing-import]
+from asyncio import Semaphore
+# pyrefly: ignore [missing-import]
 import httpx
 import asyncio
 import re
+
+package_regex = re.compile(r"^@?[a-zA-Z0-9\-_\.]+(/[a-zA-Z0-9\-_\.]+)?$")
 
 def parse_major_version(version_str: str) -> int:
     cleaned = re.sub(r'^[^0-9]+', '', str(version_str))
@@ -16,18 +20,21 @@ def calculate_version_penalty(declared_version: str, latest_version: str) -> int
     elif diff == 2: return 2
     else: return 5
 
-async def fetch_latest_version(client: httpx.AsyncClient, package: str, ecosystem: str) -> str:
-    try:
-        if ecosystem == "node":
-            resp = await client.get(f"https://registry.npmjs.org/{package}/latest", timeout=3.0)
-            if resp.status_code == 200: return resp.json().get("version", "0.0.0")
-        elif ecosystem == "python":
-            resp = await client.get(f"https://pypi.org/pypi/{package}/json", timeout=3.0)
-            if resp.status_code == 200: return resp.json().get("info", {}).get("version", "0.0.0")
-    except Exception:
-        pass
+async def fetch_latest_version(client: httpx.AsyncClient, package: str, ecosystem: str,semaphore:asyncio.Semaphore) -> str:
+    if not package_regex.match(package):
+        return "timeout" 
+    async with semaphore:
+        try:
+            if ecosystem == "node":
+                resp = await client.get(f"https://registry.npmjs.org/{package}/latest", timeout=3.0)
+                if resp.status_code == 200: return resp.json().get("version", "0.0.0")
+            elif ecosystem == "python":
+                resp = await client.get(f"https://pypi.org/pypi/{package}/json", timeout=3.0)
+                if resp.status_code == 200: return resp.json().get("info", {}).get("version", "0.0.0")
+        except Exception:
+            pass
     
-    return "timeout"
+        return "timeout"
 
 async def evaluate_dependencies(dependency_files: list) -> dict:
     deps_to_check = []
@@ -50,13 +57,13 @@ async def evaluate_dependencies(dependency_files: list) -> dict:
                     name, ver = line.split('==', 1)
                     deps_to_check.append({"name": name.strip(), "version": ver.strip(), "ecosystem": "python", "is_dev": False})
 
-
+    deps_to_check = deps_to_check[:100]
     if not deps_to_check: return {"penalty_score":0,"dependencies_list":[]}
 
     total_penalty = 0
-    
+    semaphore=asyncio.Semaphore(20)
     async with httpx.AsyncClient() as client:
-        tasks = [fetch_latest_version(client, dep['name'], dep['ecosystem']) for dep in deps_to_check]
+        tasks = [fetch_latest_version(client, dep['name'], dep['ecosystem'],semaphore) for dep in deps_to_check]
         latest_versions = await asyncio.gather(*tasks, return_exceptions=True)
         
         dependencies_data = []
