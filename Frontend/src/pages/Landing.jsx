@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'
 import mockDashboard from '../assets/ssfor.png';
 
 export default function Landing() {
@@ -8,7 +9,8 @@ export default function Landing() {
 
     return (
         <div className="min-h-screen flex flex-col relative bg-amber-50/15 text-slate-900 overflow-x-hidden">
-            <header className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center relative z-30">
+            <motion.header initial={{ opacity: 0.1, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center relative z-30">
                 <div className="text-3xl font-md tracking-tight text-slate-900">
                     RepoDx
                 </div>
@@ -18,12 +20,13 @@ export default function Landing() {
                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" className="w-5 h-5 invert" />
                     Login
                 </button>
-            </header>
+            </motion.header>
 
             <main className="flex-1 flex flex-col items-center p-8 max-w-7xl mx-auto w-full relative gap-24">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full mt-8 lg:mt-12">
 
-                    <div className="space-y-8 z-10 relative -translate-y-13 translate-x-2">
+                    <motion.div initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
+                        className="space-y-8 z-10 relative -translate-y-13 translate-x-2">
                         <h1 className="text-6xl lg:text-7xl font-extrabold tracking-tight text-stone-900 leading-tight">
                             Analyze your <br /> Repositories
                         </h1>
@@ -38,16 +41,17 @@ export default function Landing() {
                             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" className="w-5 h-5 invert" />
                             Login with GitHub
                         </button>
-                    </div>
+                    </motion.div>
 
                     <div className="w-full relative lg:w-[95%] ml-auto z-20 -translate-y-6 lg:-translate-y-12">
-                        <div className="bg-white/40 backdrop-blur-xl p-3 sm:p-4 rounded-[2rem] shadow-2xl border border-white/60">
+                        <motion.div initial={{ opacity: 0.1, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                            className="bg-white/40 backdrop-blur-xl p-3 sm:p-4 rounded-[2rem] shadow-2xl border border-white/60">
                             <img
                                 src={mockDashboard}
                                 alt="RepoDx Dashboard Preview"
                                 className="w-full h-auto rounded-xl shadow-sm border border-slate-200 object-cover"
                             />
-                        </div>
+                        </motion.div>
                     </div>
 
                 </div>

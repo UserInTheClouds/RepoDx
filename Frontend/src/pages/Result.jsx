@@ -4,6 +4,7 @@ import CommitCount from './components/CommitCount.jsx';
 import BusFactor from './components/BusFactor.jsx';
 import Dependencies from './components/Dependencies.jsx';
 import PRVelocity from './components/PRVelocity.jsx';
+import { motion } from 'framer-motion'
 
 
 export default function Result({ health_data, is_loading }) {
@@ -35,7 +36,8 @@ export default function Result({ health_data, is_loading }) {
 
     return (
         <div className="min-h-screen bg-amber-50/15 relative pb-12 font-sans">
-            <header className="absolute top-0 left-0 w-full z-50">
+            <motion.header initial={{ opacity: 0.3, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="absolute top-0 left-0 w-full z-50">
                 <div className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center">
                     <Link to="/" className="text-3xl font-normal tracking-tight text-slate-900 hover:text-slate-600 transition-colors">
                         RepoDx
@@ -46,7 +48,7 @@ export default function Result({ health_data, is_loading }) {
                         Log Out
                     </button>
                 </div>
-            </header>
+            </motion.header>
 
 
             <div className="max-w-7xl mx-auto p-6 pt-28">
@@ -61,7 +63,8 @@ export default function Result({ health_data, is_loading }) {
                     </div>
                 )}
 
-                <div className="flex justify-between items-start mb-8">
+                <motion.div initial={{ opacity: 0.3, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                    className="flex justify-between items-start mb-3">
                     <div>
                         <h2 className="text-3xl font-medium text-slate-900 tracking-tight">
                             Analytics Dashboard
@@ -75,38 +78,43 @@ export default function Result({ health_data, is_loading }) {
                     <Link to="/input" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-medium transition-colors shadow-sm">
                         Analyze Another
                     </Link>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="md:col-span-1 flex flex-col gap-6">
                         <div className="md:col-span-1 flex flex-col gap-6">
-                            <div className="flex-1">
+                            <motion.div initial={{ opacity: 0, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+                                className="flex-1">
                                 <FinalScore health_score={health_score} />
-                            </div>
-                            <div className="flex-1">
+                            </motion.div>
+                            <motion.div initial={{ opacity: 0, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}
+                                className="flex-1">
                                 <BusFactor bus_factor_risk={bus_factor_risk} />
-                            </div>
-                            <div className="flex-1">
+                            </motion.div>
+                            <motion.div initial={{ opacity: 0, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
+                                className="flex-1">
                                 <PRVelocity pr_velocity_days={pr_velocity_days} />
-                            </div>
+                            </motion.div>
                         </div>
 
 
                     </div>
 
-                    <div className="md:col-span-2">
+                    <motion.div initial={{ opacity: 0, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.25 }}
+                        className="md:col-span-2">
                         <CommitCount
                             commit_history={commit_history}
                             max_zscore={max_zscore}
                         />
-                    </div>
+                    </motion.div>
 
-                    <div className="md:col-span-3">
+                    <motion.div initial={{ opacity: 0, y: -1 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.6 }}
+                        className="md:col-span-3">
                         <Dependencies
                             dependencies={dependencies}
                             dependency_penalty_score={dependency_penalty_score}
                         />
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>

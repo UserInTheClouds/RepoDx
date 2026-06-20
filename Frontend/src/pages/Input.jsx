@@ -1,4 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion'
 
 export default function Input({
     health_data, setHealthData,
@@ -43,7 +44,8 @@ export default function Input({
     return (
 
         <div className="min-h-screen bg-amber-50/15 flex items-center justify-center p-4 relative">
-            <header className="absolute top-0 left-0 w-full z-50">
+            <motion.header initial={{ opacity: 0.4, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="absolute top-0 left-0 w-full z-50">
                 <div className="w-full max-w-7xl mx-auto p-6 flex justify-between items-center">
                     <Link to="/" className="text-3xl font-normal tracking-tight text-slate-900 hover:text-slate-600 transition-colors">
                         RepoDx
@@ -55,10 +57,11 @@ export default function Input({
                         Log Out
                     </button>
                 </div>
-            </header>
+            </motion.header>
 
 
-            <div className="w-full max-w-2xl p-10 rounded-2xl">
+            <motion.div initial={{ opacity: 0.4, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="w-full max-w-2xl p-10 rounded-2xl">
 
                 {is_loading ? (
                     <div className="py-12 flex flex-col items-center justify-center space-y-6">
@@ -97,7 +100,7 @@ export default function Input({
                         </form>
                     </>
                 )}
-            </div>
-        </div>
+            </motion.div>
+        </div >
     );
 }
