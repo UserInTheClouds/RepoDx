@@ -14,6 +14,13 @@ const analyzeLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-router.post('/analyze-url', analyzeLimiter, getRepoData);
+const isAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
+    }
+    return res.status(401).json({ error: "Unauthorized request. Please log in." });
+};
+
+router.post('/analyze-url', isAuthenticated, analyzeLimiter, getRepoData);
 
 export default router
