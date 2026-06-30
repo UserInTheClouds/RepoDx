@@ -85,7 +85,7 @@ export const getRepoData = async (req, res) => {
                 owner,
                 repo,
                 tree_sha: defaultBranch,
-                recursive: isMassiveRepo ? "false" : "true"
+                recursive: isMassiveRepo ? undefined : "true"
             });
 
             let manifestFiles = treeData.tree.filter(item =>
