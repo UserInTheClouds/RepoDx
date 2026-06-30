@@ -34,8 +34,8 @@ export const getRepoData = async (req, res) => {
         const repo = urlParts[urlParts.length - 1].replace('.git', '');
 
         const [commitPages, prPages] = await Promise.all([
-            Promise.all([1].map(page => octokit.rest.repos.listCommits({ owner, repo, per_page: 100, page }))),
-            Promise.all([1].map(page => octokit.rest.pulls.list({ owner, repo, state: 'closed', per_page: 100, page })))
+            Promise.all([1, 2, 3].map(page => octokit.rest.repos.listCommits({ owner, repo, per_page: 100, page }))),
+            Promise.all([1, 2, 3].map(page => octokit.rest.pulls.list({ owner, repo, state: 'closed', per_page: 100, page })))
         ]);
 
         const rawCommits = commitPages.flatMap(response => response.data);
