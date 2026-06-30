@@ -79,11 +79,13 @@ export const getRepoData = async (req, res) => {
             repoData = response.data;
             const defaultBranch = repoData.default_branch;
 
+            const isMassiveRepo = repoData.size > 75000;
+
             const { data: treeData } = await octokit.rest.git.getTree({
                 owner,
                 repo,
                 tree_sha: defaultBranch,
-                recursive: "true"
+                recursive: isMassiveRepo ? "false" : "true"
             });
 
             let manifestFiles = treeData.tree.filter(item =>
